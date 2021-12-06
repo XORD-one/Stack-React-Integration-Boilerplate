@@ -1,8 +1,11 @@
-import { Connect, AuthOptions, FinishedAuthData } from '@stacks/connect-react';
+import { Connect, AuthOptions } from '@stacks/connect-react';
 import React, { useEffect, useState } from 'react';
 import App from './App';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { setUser } from '../redux/slices/userSlice/actions';
+import { checkAndConnectUser } from '../redux/slices/authSlice/actions';
+import { setUserState } from '../redux/slices/userSlice';
+import { setUserSession } from '../redux/slices/authSlice';
 
 const WithHiroWallet: React.FC = () => {
   const [authOpts, setAuthOpts] = useState<AuthOptions | null>(null);
@@ -12,17 +15,10 @@ const WithHiroWallet: React.FC = () => {
   useEffect(() => {
     setAuthOpts({
       onFinish: res => {
-        dispatch(
-          setUser({
-            authToken: res.authResponse,
-            profile: res.authResponsePayload,
-            session: res.userSession,
-            stxAddresses: {
-              testnet: res.authResponsePayload.profile.stxAdress.testnet,
-              mainnet: res.authResponsePayload.profile.stxAdress.mainnet,
-            },
-          }),
-        );
+        const user = res.userSession.loadUserData();
+        dispatch(setUserState(user));
+        dispatch(setUser(user.profile.stxAddress));
+        dispatch(setUserSession(res.userSession));
       },
       onCancel: () => {
         console.log('auth canceled');
@@ -32,6 +28,8 @@ const WithHiroWallet: React.FC = () => {
         icon: appDetails.logo,
       },
     });
+
+    dispatch(checkAndConnectUser());
   }, []);
 
   if (!authOpts) return <h1>loading</h1>;

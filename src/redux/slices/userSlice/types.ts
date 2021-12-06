@@ -1,9 +1,7 @@
-import { AuthResponsePayload, UserSession } from '@stacks/connect';
+import { UserData } from '@stacks/auth';
 
 export interface UserState {
-  authToken: string;
-  session: UserSession | null;
-  profile: AuthResponsePayload | null;
+  profile: UserData | null;
   stxAddresses: {
     testnet: string;
     mainnet: string;
