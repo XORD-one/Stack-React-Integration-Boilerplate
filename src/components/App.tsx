@@ -5,6 +5,9 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { APPLICATION_URL } from '../constant';
 import { setStxAddresses, setUserState } from '../redux/slices/userSlice';
 import { clearUserSession } from '../redux/slices/authSlice';
+import stacksFetch from '../api/stacksFetch';
+import { getStxDecimals } from '../utils';
+import { updateBalances } from '../redux/slices/walletsSlice/actions';
 
 type Props = {};
 
@@ -15,6 +18,7 @@ const App: FC<Props> = () => {
 
   const userData = useAppSelector(state => state.user);
   const authData = useAppSelector(state => state.auth);
+  const walletData = useAppSelector(state => state.wallet);
 
   const dispatch = useAppDispatch();
 
@@ -35,10 +39,18 @@ const App: FC<Props> = () => {
     }
   }, [authData]);
 
+  useEffect(() => {
+    if (userData.stxAddresses.testnet && userData.stxAddresses.mainnet) {
+      dispatch(updateBalances());
+    }
+  }, [userData.stxAddresses]);
+
   const onDisconnect = () => {
     dispatch(clearUserSession());
     authData.session?.signUserOut(APPLICATION_URL);
   };
+
+  console.log('walletData -', walletData);
 
   return (
     <div className="App">

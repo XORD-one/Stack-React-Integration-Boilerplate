@@ -2,9 +2,8 @@ import { Connect, AuthOptions } from '@stacks/connect-react';
 import React, { useEffect, useState } from 'react';
 import App from './App';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { setUser } from '../redux/slices/userSlice/actions';
 import { checkAndConnectUser } from '../redux/slices/authSlice/actions';
-import { setUserState } from '../redux/slices/userSlice';
+import { setStxAddresses, setUserState } from '../redux/slices/userSlice';
 import { setUserSession } from '../redux/slices/authSlice';
 
 const WithHiroWallet: React.FC = () => {
@@ -17,7 +16,7 @@ const WithHiroWallet: React.FC = () => {
       onFinish: res => {
         const user = res.userSession.loadUserData();
         dispatch(setUserState(user));
-        dispatch(setUser(user.profile.stxAddress));
+        dispatch(setStxAddresses(user.profile.stxAddress));
         dispatch(setUserSession(res.userSession));
       },
       onCancel: () => {
