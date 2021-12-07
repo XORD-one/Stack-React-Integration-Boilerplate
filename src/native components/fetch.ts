@@ -1,7 +1,14 @@
-interface RequestBody {
+export interface RequestBody {
   method: string;
   headers: { [key: string]: string };
   body?: string;
+}
+
+export interface ResponseBody {
+  status: number;
+  data: any;
+  response: any;
+  successful: boolean;
 }
 
 export class Fetch {
@@ -16,7 +23,7 @@ export class Fetch {
     method: string,
     body?: any,
     headers: any = {},
-  ): Promise<any> {
+  ): Promise<ResponseBody> {
     const requestData: RequestBody = {
       method,
       headers: {
@@ -48,11 +55,15 @@ export class Fetch {
     };
   }
 
-  async get(extension: string, headers?: any): Promise<any> {
+  async get(extension: string, headers?: any): Promise<ResponseBody> {
     return await this.request(extension, 'GET', {}, headers);
   }
 
-  async post(extension: string, body?: any, headers?: any): Promise<any> {
+  async post(
+    extension: string,
+    body?: any,
+    headers?: any,
+  ): Promise<ResponseBody> {
     return await this.request(extension, 'POST', body, headers);
   }
 }

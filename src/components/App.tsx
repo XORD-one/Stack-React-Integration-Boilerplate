@@ -2,13 +2,18 @@ import React, { FC, useEffect } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { StacksTestnet as StacksNetwork } from '@stacks/network';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { APPLICATION_URL } from '../constant';
+import {
+  APPLICATION_URL,
+  STACKS_MAINNET_URL,
+  STACKS_TESTNET_URL,
+} from '../constant';
 import { setStxAddresses, setUserState } from '../redux/slices/userSlice';
 import { clearUserSession } from '../redux/slices/authSlice';
-import stacksFetch from '../api/stacksFetch';
 import { updateBalances } from '../redux/slices/walletsSlice/wallets.actions';
 import { fetchTransactions } from '../redux/slices/transactionsSlice/transactions.actions';
 import { setNetwork } from '../redux/slices/walletsSlice';
+import { setFetchInstance } from '../redux/slices/fetchSlice';
+import { Fetch } from '../native components/fetch';
 
 type Props = {};
 
@@ -18,7 +23,7 @@ const App: FC<Props> = () => {
   const userData = useAppSelector(state => state.user);
   const authData = useAppSelector(state => state.auth);
   const walletData = useAppSelector(state => state.wallet);
-  const transactionsData = useAppSelector(state => state.transactions);
+  const fetchInstance = useAppSelector(state => state.fetchInstance);
 
   const dispatch = useAppDispatch();
 
@@ -47,13 +52,23 @@ const App: FC<Props> = () => {
   }, [userData.stxAddresses]);
 
   useEffect(() => {
-    console.log('walletData', transactionsData);
-  }, [transactionsData]);
+    dispatch(
+      setFetchInstance(
+        new Fetch(
+          walletData.network === 'mainnet'
+            ? STACKS_MAINNET_URL
+            : STACKS_TESTNET_URL,
+        ),
+      ),
+    );
+  }, [walletData.network]);
 
   const onDisconnect = () => {
     dispatch(clearUserSession());
     authData.session?.signUserOut(APPLICATION_URL);
   };
+
+  console.log('fetchInstance', fetchInstance);
 
   return (
     <div className="App">
