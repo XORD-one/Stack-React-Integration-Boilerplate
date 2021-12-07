@@ -10,4 +10,5 @@ export interface WalletsState {
   stxBalance: number;
   tokensInWallet: Token[];
   totalAssetsBalance: number;
+  network: string;
 }

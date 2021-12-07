@@ -5,6 +5,7 @@ const initialState: WalletsState = {
   stxBalance: 0,
   tokensInWallet: [],
   totalAssetsBalance: 0,
+  network: '',
 };
 
 export const walletsSlice = createSlice({
@@ -20,10 +21,17 @@ export const walletsSlice = createSlice({
     setTotalAssetsBalance: (state, action: PayloadAction<number>) => {
       state.totalAssetsBalance = action.payload;
     },
+    setNetwork: (state, action: PayloadAction<string>) => {
+      state.network = action.payload;
+    },
   },
 });
 
-export const { setStateBalance, setTokensInWallet, setTotalAssetsBalance } =
-  walletsSlice.actions;
+export const {
+  setStateBalance,
+  setTokensInWallet,
+  setTotalAssetsBalance,
+  setNetwork,
+} = walletsSlice.actions;
 
 export default walletsSlice.reducer;

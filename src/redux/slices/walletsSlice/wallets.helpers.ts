@@ -1,10 +1,8 @@
 import stacksFetch from '../../../api/stacksFetch';
-import {
-  convertExponentToPlainNumber,
-  getReadOnlyFunctionUrl,
-} from '../../../utils';
+import { convertExponentToPlainNumber } from '../../../utils';
 import { Token } from './wallets.types';
 import { cvToValue, parseReadOnlyResponse } from '@stacks/transactions';
+import { getReadOnlyFunctionUrl } from '../../../api/endpoints';
 
 export const extractTokenContractNameAndAddress = (str: string) => {
   return {
@@ -18,7 +16,7 @@ export const getTokenDecimals = async (
   userAddress: string,
 ): Promise<number> => {
   const { data } = await stacksFetch.post(
-    `v2/contracts/call-read/${token.address}/${token.name}/get-decimals`,
+    getReadOnlyFunctionUrl(token.address, token.contractName, 'get-decimals'),
     {
       sender: userAddress,
       arguments: [],

@@ -7,16 +7,17 @@ import {
   getTokenInfo,
 } from './wallets.helpers';
 import { Token } from './wallets.types';
+import { getAccountBalanceUrl } from '../../../api/endpoints';
 
 export const updateBalances =
   () => async (dispatch: any, getState: () => RootState) => {
     try {
       const state = getState();
-      const userAddress = state.user.stxAddresses.testnet;
+      const userAddress = (state.user.stxAddresses as any)[
+        state.wallet.network
+      ];
 
-      const { data } = await stacksFetch.get(
-        `extended/v1/address/${userAddress}/balances`,
-      );
+      const { data } = await stacksFetch.get(getAccountBalanceUrl(userAddress));
 
       const otherAssets = Object.keys(data.fungible_tokens);
       Object.keys(data.fungible_tokens);
