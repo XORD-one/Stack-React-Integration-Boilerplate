@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppDetailsState } from './types';
+import { AppDetailsState } from './appDetails.types';
 
 // Define the initial state using that type
 const initialState: AppDetailsState = {

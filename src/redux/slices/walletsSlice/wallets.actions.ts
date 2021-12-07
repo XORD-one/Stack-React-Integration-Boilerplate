@@ -2,8 +2,11 @@ import { RootState } from '../../configureStore';
 import stacksFetch from '../../../api/stacksFetch';
 import { getStxDecimals } from '../../../utils';
 import { setStateBalance, setTokensInWallet } from '.';
-import { extractTokenContractNameAndAddress, getTokenInfo } from './helpers';
-import { Token } from './types';
+import {
+  extractTokenContractNameAndAddress,
+  getTokenInfo,
+} from './wallets.helpers';
+import { Token } from './wallets.types';
 
 export const updateBalances =
   () => async (dispatch: any, getState: () => RootState) => {

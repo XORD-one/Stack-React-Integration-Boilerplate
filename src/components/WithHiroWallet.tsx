@@ -2,7 +2,7 @@ import { Connect, AuthOptions } from '@stacks/connect-react';
 import React, { useEffect, useState } from 'react';
 import App from './App';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { checkAndConnectUser } from '../redux/slices/authSlice/actions';
+import { checkAndConnectUser } from '../redux/slices/authSlice/auth.actions';
 import { setStxAddresses, setUserState } from '../redux/slices/userSlice';
 import { setUserSession } from '../redux/slices/authSlice';
 

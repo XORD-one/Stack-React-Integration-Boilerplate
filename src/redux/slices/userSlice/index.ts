@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UserData } from '@stacks/auth';
-import type { UserState } from './types';
+import type { UserState } from './user.types';
 
 // Define the initial state using that type
 const initialState: UserState = {

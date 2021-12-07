@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Token, WalletsState } from './types';
+import { Token, WalletsState } from './wallets.types';
 
 const initialState: WalletsState = {
   stxBalance: 0,

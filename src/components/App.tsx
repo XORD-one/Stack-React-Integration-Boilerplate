@@ -7,8 +7,8 @@ import { setStxAddresses, setUserState } from '../redux/slices/userSlice';
 import { clearUserSession } from '../redux/slices/authSlice';
 import stacksFetch from '../api/stacksFetch';
 import { getStxDecimals } from '../utils';
-import { updateBalances } from '../redux/slices/walletsSlice/actions';
-import { getTokenDecimals } from '../redux/slices/walletsSlice/helpers';
+import { updateBalances } from '../redux/slices/walletsSlice/wallets.actions';
+import { getTokenDecimals } from '../redux/slices/walletsSlice/wallets.helpers';
 
 type Props = {};
 

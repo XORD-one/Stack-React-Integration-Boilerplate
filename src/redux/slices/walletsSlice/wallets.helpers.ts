@@ -3,7 +3,7 @@ import {
   convertExponentToPlainNumber,
   getReadOnlyFunctionUrl,
 } from '../../../utils';
-import { Token } from './types';
+import { Token } from './wallets.types';
 import { cvToValue, parseReadOnlyResponse } from '@stacks/transactions';
 
 export const extractTokenContractNameAndAddress = (str: string) => {
