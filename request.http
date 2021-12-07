@@ -1,1 +1,12 @@
 GET https://stacks-node-api.testnet.stacks.co/v2/transactions
+###
+POST https://stacks-node-api.testnet.stacks.co/v2/contracts/call-read/STDVAGX3EGETB7BJ6737FRS4DTNXC7CVSQMN1M7W/stsw-token-v4a/get-symbol
+Content-Type: application/json
+
+{
+    "sender": "ST1ZVRVYK15Y5VRTMQQNKBS6J701JQSKP1VMCHHYG",
+    "arguments": [],
+}
+
+###
+GET https://stacks-node-api.testnet.stacks.co/v2/contracts/interface/STDVAGX3EGETB7BJ6737FRS4DTNXC7CVSQMN1M7W/stsw-token-v4a

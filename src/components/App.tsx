@@ -8,6 +8,7 @@ import { clearUserSession } from '../redux/slices/authSlice';
 import stacksFetch from '../api/stacksFetch';
 import { getStxDecimals } from '../utils';
 import { updateBalances } from '../redux/slices/walletsSlice/actions';
+import { getTokenDecimals } from '../redux/slices/walletsSlice/helpers';
 
 type Props = {};
 
@@ -45,12 +46,14 @@ const App: FC<Props> = () => {
     }
   }, [userData.stxAddresses]);
 
+  useEffect(() => {
+    console.log('walletData', walletData);
+  }, [walletData]);
+
   const onDisconnect = () => {
     dispatch(clearUserSession());
     authData.session?.signUserOut(APPLICATION_URL);
   };
-
-  console.log('walletData -', walletData);
 
   return (
     <div className="App">
