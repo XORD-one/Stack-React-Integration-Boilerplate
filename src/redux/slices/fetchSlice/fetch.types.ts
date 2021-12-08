@@ -5,3 +5,8 @@ export interface FetchInstance {
   get: (extension: string, headers?: any) => Promise<ResponseBody>;
   post: (extension: string, body?: any, headers?: any) => Promise<ResponseBody>;
 }
+
+export interface FetchState {
+  instance: FetchInstance;
+  url: string;
+}

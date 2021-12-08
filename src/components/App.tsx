@@ -1,19 +1,13 @@
 import React, { FC, useEffect } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { StacksTestnet as StacksNetwork } from '@stacks/network';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import {
-  APPLICATION_URL,
-  STACKS_MAINNET_URL,
-  STACKS_TESTNET_URL,
-} from '../constant';
+import { APPLICATION_URL } from '../constant';
 import { setStxAddresses, setUserState } from '../redux/slices/userSlice';
 import { clearUserSession } from '../redux/slices/authSlice';
 import { updateBalances } from '../redux/slices/walletsSlice/wallets.actions';
 import { fetchTransactions } from '../redux/slices/transactionsSlice/transactions.actions';
 import { setNetwork } from '../redux/slices/walletsSlice';
-import { setFetchInstance } from '../redux/slices/fetchSlice';
-import { Fetch } from '../native components/fetch';
+import { updateFetchInstance } from '../redux/slices/fetchSlice';
 
 type Props = {};
 
@@ -23,15 +17,10 @@ const App: FC<Props> = () => {
   const userData = useAppSelector(state => state.user);
   const authData = useAppSelector(state => state.auth);
   const walletData = useAppSelector(state => state.wallet);
-  const fetchInstance = useAppSelector(state => state.fetchInstance);
+  const fetchData = useAppSelector(state => state.fetchInstance);
+  const transactionsData = useAppSelector(state => state.transactions);
 
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    const network = new StacksNetwork();
-
-    dispatch(setNetwork(network.isMainnet() ? 'mainnet' : 'testnet'));
-  }, []);
 
   useEffect(() => {
     if (authData.isConnected && !userData.profile) {
@@ -49,18 +38,10 @@ const App: FC<Props> = () => {
       dispatch(updateBalances());
       dispatch(fetchTransactions());
     }
-  }, [userData.stxAddresses]);
+  }, [userData.stxAddresses, fetchData.instance]);
 
   useEffect(() => {
-    dispatch(
-      setFetchInstance(
-        new Fetch(
-          walletData.network === 'mainnet'
-            ? STACKS_MAINNET_URL
-            : STACKS_TESTNET_URL,
-        ),
-      ),
-    );
+    dispatch(updateFetchInstance(walletData.network));
   }, [walletData.network]);
 
   const onDisconnect = () => {
@@ -68,25 +49,49 @@ const App: FC<Props> = () => {
     authData.session?.signUserOut(APPLICATION_URL);
   };
 
-  console.log('fetchInstance', fetchInstance);
-
   return (
     <div className="App">
-      Welcome to Stacks App! ({walletData.network})
+      Welcome to Xord Stacks App! ({walletData.network})
+      <button
+        onClick={() =>
+          dispatch(
+            setNetwork(
+              walletData.network === 'mainnet' ? 'testnet' : 'mainnet',
+            ),
+          )
+        }>
+        Switch to {walletData.network === 'mainnet' ? 'testnet' : 'mainnet'}
+      </button>
+      <button onClick={authData.session ? onDisconnect : () => doOpenAuth()}>
+        {authData.session ? 'Disconnect Wallet' : 'Connect Wallet'}
+      </button>
       {authData.session ? (
         <div>
-          <h3>
+          <h5>
             {walletData.network
               ? (userData.stxAddresses as any)[walletData.network]
               : null}
-          </h3>
-          {/* <p>{userData?.balance} STX</p> */}
-          <button onClick={onDisconnect}>Disconnect Wallet</button>
-          {/* <button onClick={async () => {}}>Get Balance</button> */}
+          </h5>
         </div>
-      ) : (
-        <button onClick={() => doOpenAuth()}>Connect Wallet</button>
-      )}
+      ) : null}
+      <h2>Funds In Wallet</h2>
+      {[walletData.stxBalance, ...walletData.tokensInWallet].map((token, i) => {
+        if (typeof token === 'number') return <p>STX: {token}</p>;
+        return (
+          <p>
+            {token.symbol}: {token.balance}
+          </p>
+        );
+      })}
+      <h2>Transaction History</h2>
+      {transactionsData.transactions.map((transaction, i) => {
+        return (
+          <p key={i}>
+            {transaction.tx_id} of {transaction.tx_type} was{' '}
+            {transaction.tx_status}
+          </p>
+        );
+      })}
     </div>
   );
 };

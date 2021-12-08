@@ -5,7 +5,7 @@ const initialState: WalletsState = {
   stxBalance: 0,
   tokensInWallet: [],
   totalAssetsBalance: 0,
-  network: '',
+  network: 'testnet',
 };
 
 export const walletsSlice = createSlice({

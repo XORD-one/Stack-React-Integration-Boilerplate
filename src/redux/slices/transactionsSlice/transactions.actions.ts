@@ -7,6 +7,9 @@ export const fetchTransactions =
   () => async (dispatch: any, getState: () => RootState) => {
     try {
       const state = getState();
+
+      console.log(state);
+
       const userAddress = (state.user.stxAddresses as any)[
         state.wallet.network
       ];
