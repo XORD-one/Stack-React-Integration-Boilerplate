@@ -3,6 +3,7 @@ import { convertExponentToPlainNumber } from '../../../utils';
 import { Token } from './wallets.types';
 import { cvToValue, parseReadOnlyResponse } from '@stacks/transactions';
 import { getReadOnlyFunctionUrl } from '../../../api/endpoints';
+import { FetchInstance } from '../fetchSlice/fetch.types';
 
 export const extractTokenContractNameAndAddress = (str: string) => {
   return {
@@ -14,8 +15,9 @@ export const extractTokenContractNameAndAddress = (str: string) => {
 export const getTokenDecimals = async (
   token: Omit<Token, 'balance'>,
   userAddress: string,
+  fetchInstance: FetchInstance,
 ): Promise<number> => {
-  const { data } = await stacksFetch.post(
+  const { data } = await fetchInstance.post(
     getReadOnlyFunctionUrl(token.address, token.contractName, 'get-decimals'),
     {
       sender: userAddress,
@@ -29,6 +31,7 @@ export const getTokenDecimals = async (
 export const getTokenInfo = async (
   token: Omit<Token, 'balance' | 'name' | 'symbol'>,
   userAddress: string,
+  fetchInstance: FetchInstance,
 ): Promise<any> => {
   const body = {
     sender: userAddress,
@@ -36,7 +39,7 @@ export const getTokenInfo = async (
   };
 
   const promises = ['get-decimals', 'get-symbol', 'get-name'].map(routeName =>
-    stacksFetch.post(
+    fetchInstance.post(
       getReadOnlyFunctionUrl(token.address, token.contractName, routeName),
       body,
     ),

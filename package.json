@@ -5,7 +5,6 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.2",
     "@stacks/auth": "^2.0.1",
-    "@stacks/blockchain-api-client": "^0.71.2",
     "@stacks/common": "^3.0.0",
     "@stacks/connect-react": "^13.0.0",
     "@stacks/network": "^3.0.0",

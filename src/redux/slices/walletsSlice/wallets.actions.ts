@@ -1,5 +1,4 @@
 import { RootState } from '../../configureStore';
-import stacksFetch from '../../../api/stacksFetch';
 import { getStxDecimals } from '../../../utils';
 import { setStateBalance, setTokensInWallet } from '.';
 import {
@@ -17,7 +16,9 @@ export const updateBalances =
         state.wallet.network
       ];
 
-      const { data } = await stacksFetch.get(getAccountBalanceUrl(userAddress));
+      const { data } = await state.fetchInstance.instance.get(
+        getAccountBalanceUrl(userAddress),
+      );
 
       const otherAssets = Object.keys(data.fungible_tokens);
       Object.keys(data.fungible_tokens);
@@ -27,7 +28,11 @@ export const updateBalances =
           const { address, contractName } =
             extractTokenContractNameAndAddress(token);
 
-          return getTokenInfo({ address, contractName }, userAddress);
+          return getTokenInfo(
+            { address, contractName },
+            userAddress,
+            state.fetchInstance.instance,
+          );
         }),
       );
 

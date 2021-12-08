@@ -15,7 +15,8 @@ const WithHiroWallet: React.FC = () => {
     setAuthOpts({
       onFinish: res => {
         const user = res.userSession.loadUserData();
-        dispatch(setUserState(user));
+        console.log('onFinish', res, user);
+        // dispatch(setUserState(user));
         dispatch(setStxAddresses(user.profile.stxAddress));
         dispatch(setUserSession(res.userSession));
       },

@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserData } from '@stacks/auth';
-import type { UserState } from './user.types';
+import type { ProfileState, UserState } from './user.types';
 
 // Define the initial state using that type
 const initialState: UserState = {
@@ -15,7 +14,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUserState: (state, action: PayloadAction<UserData>) => {
+    setUserState: (state, action: PayloadAction<ProfileState>) => {
       state.profile = action.payload;
     },
     setStxAddresses: (
