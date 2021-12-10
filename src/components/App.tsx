@@ -16,17 +16,33 @@ import {
   makeUnsignedSTXTokenTransfer,
   SignedTokenTransferOptions,
   UnsignedTokenTransferOptions,
+  parseToCV,
+  ClarityAbiTypeId,
+  cvToValue,
+  ClarityType,
+  stringUtf8CV,
+  noneCV,
+  createFungiblePostCondition,
+  uintCV,
 } from '@stacks/transactions';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
-import { doSignaturesMatchPublicKeys } from '@stacks/auth';
+import { makeAuthResponse } from '@stacks/auth';
+import {
+  encryptPrivateKey,
+  decryptPrivateKey,
+} from '@stacks/auth/dist/messages';
+import { getContractAbi } from '../api/endpoints';
+import { principalCV } from '@stacks/transactions/dist/clarity/types/principalCV';
 
 type Props = {};
+
+// test address -- ST1KRXW1H418VGDCQQ068A8XFJ2SSH9NZPJ481JX4
 
 const App: FC<Props> = () => {
   const [amountValue, setAmountValue] = useState('');
   const [recipientValue, setRecipientValue] = useState('');
 
-  const { doOpenAuth } = useConnect();
+  const { doOpenAuth, doSTXTransfer, doContractCall } = useConnect();
 
   const userData = useAppSelector(state => state.user);
   const authData = useAppSelector(state => state.auth);
@@ -37,15 +53,9 @@ const App: FC<Props> = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (authData.isConnected && !userData.profile) {
-      const user = authData.session?.loadUserData();
-      console.log('authData --', authData.session);
-      if (user) {
-        // dispatch(setUserState(user));
-        dispatch(setStxAddresses(user.profile.stxAddress));
-      }
-    }
-  }, [authData]);
+    // added a timeout to allow extensio to load
+    setTimeout(() => doOpenAuth(), 2000);
+  }, []);
 
   useEffect(() => {
     if (userData.stxAddresses.testnet && userData.stxAddresses.mainnet) {
@@ -65,29 +75,52 @@ const App: FC<Props> = () => {
 
   const sendToken = async () => {
     try {
-      console.log(
-        '1111111',
-        doSignaturesMatchPublicKeys(userData.stxAddresses?.testnet),
-      );
-      // const network =
-      //   walletData.network === 'testnet'
-      //     ? new StacksTestnet()
-      //     : new StacksMainnet();
+      await doSTXTransfer({
+        amount: String(parseFloat(amountValue) * 10 ** 6),
+        recipient: recipientValue,
+        onFinish: data => {
+          console.log('tx finsihde -', data);
+        },
+        onCancel: () => {
+          console.log('tx cancleo -');
+        },
+        network: new StacksTestnet(),
+        // stxAddress: userData.stxAddresses.testnet,
+        // userSession: authData?.session || undefined,
+      });
+    } catch (error) {
+      console.error('error --', error);
+    }
+  };
 
-      // const txOpts: UnsignedTokenTransferOptions = {
-      //   recipient: recipientValue,
-      //   amount: BigInt(amountValue),
-      //   network,
-      //   anchorMode: AnchorMode.Any,
-      //   publicKey: userData.profile?.appPrivateKey || '',
-      // };
+  const sendFungibleToken = async () => {
+    try {
+      const token = walletData.tokensInWallet[0];
 
-      // const stxTransactions = await makeUnsignedSTXTokenTransfer(txOpts);
-
-      // const estimateTransferObj = await broadcastTransaction(
-      //   stxTransactions,
-      //   network,
+      // const { data } = await fetchData.instance.get(
+      //   getContractAbi(token.address, token.contractName),
       // );
+
+      // console.log('contract data --', data);
+
+      await doContractCall({
+        contractAddress: token.address,
+        contractName: token.contractName,
+        functionName: 'transfer',
+        functionArgs: [
+          uintCV(1),
+          principalCV(userData.stxAddresses.testnet),
+          principalCV('ST1KRXW1H418VGDCQQ068A8XFJ2SSH9NZPJ481JX4'),
+          noneCV(),
+        ],
+        onFinish: data => {
+          console.log('tx finsihde -', data);
+        },
+        onCancel: () => {
+          console.log('tx cancleo -');
+        },
+        network: new StacksTestnet(),
+      });
     } catch (error) {
       console.error('error --', error);
     }
@@ -154,7 +187,7 @@ const App: FC<Props> = () => {
           onChange={e => setRecipientValue(e.target.value)}
           placeholder="Recipient"
         />
-        <button onClick={sendToken}>Send</button>
+        <button onClick={sendFungibleToken}>Send</button>
       </div>
     </div>
   );

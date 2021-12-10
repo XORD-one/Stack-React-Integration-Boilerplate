@@ -9,3 +9,6 @@ export const getAccountBalanceUrl = (address: string) =>
 
 export const getAccountTransactionsUrl = (address: string) =>
   `extended/v1/address/${address}/transactions`;
+
+export const getContractAbi = (address: string, name: string) =>
+  `v2/contracts/interface/${address}/${name}`;
