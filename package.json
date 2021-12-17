@@ -2,7 +2,9 @@
   "name": "stacks-app",
   "version": "0.1.0",
   "private": true,
+  "cracoConfig": "craco.config.js",
   "dependencies": {
+    "@craco/craco": "^6.4.3",
     "@reduxjs/toolkit": "^1.6.2",
     "@stacks/auth": "^2.0.1",
     "@stacks/common": "^3.0.0",
@@ -26,9 +28,9 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

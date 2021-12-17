@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import WithHiroWallet from './components/WithHiroWallet';
+import WithHiroWallet from '@components/WithHiroWallet';
 import { Provider } from 'react-redux';
-import { store } from './redux/configureStore';
+import { store } from '@redux/configureStore';
 
 ReactDOM.render(
   <React.StrictMode>

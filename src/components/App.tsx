@@ -1,38 +1,21 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { APPLICATION_URL } from '../constant';
-import { setStxAddresses, setUserState } from '../redux/slices/userSlice';
-import { clearUserSession } from '../redux/slices/authSlice';
-import { updateBalances } from '../redux/slices/walletsSlice/wallets.actions';
-import { fetchTransactions } from '../redux/slices/transactionsSlice/transactions.actions';
-import { setNetwork } from '../redux/slices/walletsSlice';
-import { updateFetchInstance } from '../redux/slices/fetchSlice';
+import { useAppDispatch, useAppSelector } from '@hooks';
+import { clearUserSession } from '@redux/slices/authSlice';
+import { updateBalances } from '@redux/slices/walletsSlice/wallets.actions';
+import { fetchTransactions } from '@redux/slices/transactionsSlice/transactions.actions';
+import { setNetwork } from '@redux/slices/walletsSlice';
+import { updateFetchInstance } from '@redux/slices/fetchSlice';
 import {
-  AnchorMode,
-  broadcastTransaction,
-  estimateTransfer,
-  makeSTXTokenTransfer,
-  makeUnsignedSTXTokenTransfer,
-  SignedTokenTransferOptions,
-  UnsignedTokenTransferOptions,
-  parseToCV,
-  ClarityAbiTypeId,
-  cvToValue,
-  ClarityType,
-  stringUtf8CV,
   noneCV,
   createFungiblePostCondition,
   uintCV,
+  FungibleConditionCode,
+  createAssetInfo,
 } from '@stacks/transactions';
-import { StacksMainnet, StacksTestnet } from '@stacks/network';
-import { makeAuthResponse } from '@stacks/auth';
-import {
-  encryptPrivateKey,
-  decryptPrivateKey,
-} from '@stacks/auth/dist/messages';
-import { getContractAbi } from '../api/endpoints';
+import { StacksTestnet } from '@stacks/network';
 import { principalCV } from '@stacks/transactions/dist/clarity/types/principalCV';
+import { APPLICATION_URL } from '../constant';
 
 type Props = {};
 
@@ -108,7 +91,7 @@ const App: FC<Props> = () => {
         contractName: token.contractName,
         functionName: 'transfer',
         functionArgs: [
-          uintCV(1),
+          uintCV(1 * 10 ** 6),
           principalCV(userData.stxAddresses.testnet),
           principalCV('ST1KRXW1H418VGDCQQ068A8XFJ2SSH9NZPJ481JX4'),
           noneCV(),
@@ -120,6 +103,14 @@ const App: FC<Props> = () => {
           console.log('tx cancleo -');
         },
         network: new StacksTestnet(),
+        postConditions: [
+          createFungiblePostCondition(
+            userData.stxAddresses.testnet,
+            FungibleConditionCode.Equal,
+            1,
+            createAssetInfo(token.address, token.contractName, token.symbol),
+          ),
+        ],
       });
     } catch (error) {
       console.error('error --', error);
